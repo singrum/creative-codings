@@ -1,28 +1,12 @@
 import * as THREE from "three";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Mesh } from "three";
-import {
-  Box,
-  CubeCamera,
-  DragControls,
-  MeshDistortMaterial,
-  MeshReflectorMaterial,
-  MeshRefractionMaterial,
-  MeshTransmissionMaterial,
-  OrbitControls,
-  Point,
-  PointMaterial,
-  Points,
-  TransformControls,
-  shaderMaterial,
-} from "@react-three/drei";
+import { OrbitControls } from "@react-three/drei";
 import { background, blue, green, red, yellow } from "../../lib/colors";
-import { Geometry } from "three/examples/jsm/deprecated/Geometry.js";
 import { extend, useFrame, useThree } from "@react-three/fiber";
 import { BgMaterial } from "./shader";
 
 import { ImprovedNoise } from "three/examples/jsm/Addons.js";
-import { useControls } from "leva";
 import { clamp } from "three/src/math/MathUtils.js";
 
 extend({ BgMaterial });
@@ -66,16 +50,8 @@ function OuterPoints({ amplitude }: { amplitude: number }) {
 
   useFrame((state) => {
     dots.current.children.forEach((e) => e.lookAt(state.camera.position));
-    // const theta =
-    //   (noise.noise(0, 0, state.clock.oldTime / 700) + 0.5) * 2 * Math.PI;
-    // const phi = Math.acos(2 * noise.noise(0, 1, state.clock.oldTime / 700));
     const newColors = [];
     for (let dot of dots.current.children) {
-      // const cos =
-      //   Math.sin(theta) * Math.cos(phi) * dot.position.x +
-      //   Math.sin(theta) * Math.cos(phi) * dot.position.y +
-      //   Math.cos(theta) * dot.position.z;
-      const range = 1.5;
       const hypot = Math.hypot(dot.position.x, dot.position.z);
       let val =
         Math.atan(dot.position.y / hypot) +
@@ -128,7 +104,6 @@ function OuterPoints({ amplitude }: { amplitude: number }) {
 
 export default function Scene() {
   const centerCircle = useRef<Mesh>(null!);
-  const set = useThree((state) => state.set);
   const [amplitude, setAmplitude] = useState<number>(0);
   const [analyser, setAnalyser] = useState<AnalyserNode>(null!);
   useEffect(() => {
