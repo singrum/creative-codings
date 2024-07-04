@@ -1,11 +1,8 @@
 import * as THREE from "three";
-import { createRoot } from "react-dom/client";
-import React, { useEffect, useRef, useState } from "react";
-import { Canvas, useFrame, ThreeElements, useThree } from "@react-three/fiber";
+import { Canvas } from "@react-three/fiber";
 import Scene from "./Scene";
 
 export default function GoogleSearchSong() {
-  
   return (
     <>
       <div className="flex flex-col h-full items-center justify-center">

@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Mesh } from "three";
 import { OrbitControls } from "@react-three/drei";
 import { background, blue, green, red, yellow } from "../../lib/colors";
-import { extend, useFrame, useThree } from "@react-three/fiber";
+import { extend, useFrame } from "@react-three/fiber";
 import { BgMaterial } from "./shader";
 
 import { ImprovedNoise } from "three/examples/jsm/Addons.js";
@@ -118,6 +118,9 @@ export default function Scene() {
     });
   }, []);
   useFrame((state) => {
+    if (!analyser) {
+      return;
+    }
     const pcmData = new Float32Array(analyser.fftSize);
     centerCircle.current.lookAt(state.camera.position);
     analyser.getFloatTimeDomainData(pcmData);
@@ -143,6 +146,7 @@ export default function Scene() {
       {/* <directionalLight /> */}
 
       <mesh ref={centerCircle}>
+        {/* @ts-ignore */}
         <bgMaterial />
         <circleGeometry args={[1.0]} />
       </mesh>
