@@ -8,10 +8,11 @@ import { BgMaterial } from "./shader";
 
 import { ImprovedNoise } from "three/examples/jsm/Addons.js";
 import { clamp } from "three/src/math/MathUtils.js";
+import { useControls } from "leva";
 
 extend({ BgMaterial });
 
-function getColorByValue(value: number) {
+function stripe(value: number) {
   // 0, 1
 
   const absVal = Math.abs(value - 0.5) * 2;
@@ -35,7 +36,7 @@ function OuterPoints({ amplitude }: { amplitude: number }) {
   }, []);
 
   const positions = useMemo(() => {
-    const sphereGeom = new THREE.IcosahedronGeometry(1.0, 2);
+    const sphereGeom = new THREE.IcosahedronGeometry(1.0, 3);
     let gp = sphereGeom.attributes.position;
 
     const wPos = Array<THREE.Vector3>();
@@ -52,19 +53,12 @@ function OuterPoints({ amplitude }: { amplitude: number }) {
     dots.current.children.forEach((e) => e.lookAt(state.camera.position));
     const newColors = [];
     for (let dot of dots.current.children) {
-      const hypot = Math.hypot(dot.position.x, dot.position.z);
-      let val =
-        Math.atan(dot.position.y / hypot) +
-        noise.noise(
-          Math.atan(dot.position.x / dot.position.z),
-          Math.atan(dot.position.y / hypot),
-          state.clock.oldTime / 500
-        ) *
-          1;
-      val = (val + Math.PI / 2 + state.clock.oldTime / 500) % Math.PI;
-      val = val < 0 ? val + Math.PI : val;
-      val = val / Math.PI;
-      newColors.push(getColorByValue(val));
+      const normal = dot.position.clone().normalize();
+      normal.setY(normal.y + state.clock.oldTime / 1000);
+      let val = noise.noise(normal.x / 4, normal.y / 4, normal.z / 4) * 1;
+
+      val = (val + state.clock.oldTime / 800) % 1;
+      newColors.push(stripe(val));
     }
     setColors(newColors);
 
@@ -76,11 +70,11 @@ function OuterPoints({ amplitude }: { amplitude: number }) {
           Math.sin(
             (state.clock.oldTime * 10) / 1000 +
               noise.noise(
-                Math.atan(dot.position.x / dot.position.z) * 1000,
-                Math.atan(dot.position.y / hypot) * 1000,
-                0 // state.clock.oldTime / 1000
+                Math.atan(dot.position.x / dot.position.z) * 1,
+                Math.atan(dot.position.y / hypot) * 1,
+                state.clock.oldTime / 1000
               ) *
-                1.0 *
+                2.0 *
                 Math.PI
           );
       length = clamp(length, 0.2, 1.2);
@@ -94,7 +88,7 @@ function OuterPoints({ amplitude }: { amplitude: number }) {
         {positions.map((pos, i) => (
           <mesh position={pos} key={i}>
             <meshBasicMaterial color={colors ? colors[i] : "white"} />
-            <circleGeometry args={[0.03]} />
+            <circleGeometry args={[0.025]} />
           </mesh>
         ))}
       </group>
@@ -118,11 +112,11 @@ export default function Scene() {
     });
   }, []);
   useFrame((state) => {
+    centerCircle.current.lookAt(state.camera.position);
     if (!analyser) {
       return;
     }
     const pcmData = new Float32Array(analyser.fftSize);
-    centerCircle.current.lookAt(state.camera.position);
     analyser.getFloatTimeDomainData(pcmData);
     let sum = 0.0;
     for (const amplitude of pcmData) {
@@ -131,10 +125,13 @@ export default function Scene() {
     const rms = Math.sqrt(sum / pcmData.length);
     setAmplitude(Math.min(1, rms / 0.5));
   });
-
+  const control = useControls("control", {
+    amplitude: { value: 0, min: 0, max: 0.5, step: 0.01 },
+  });
   return (
     <>
       <color attach="background" args={[background]} />
+
       <OrbitControls
         enableZoom={false}
         autoRotate={true}
@@ -143,15 +140,13 @@ export default function Scene() {
       />
       <ambientLight intensity={1} />
 
-      {/* <directionalLight /> */}
-
       <mesh ref={centerCircle}>
         {/* @ts-ignore */}
         <bgMaterial />
-        <circleGeometry args={[1.0]} />
+        <planeGeometry args={[10, 10]} />
       </mesh>
 
-      <OuterPoints amplitude={amplitude} />
+      <OuterPoints amplitude={Math.max(amplitude, control.amplitude)} />
     </>
   );
 }
