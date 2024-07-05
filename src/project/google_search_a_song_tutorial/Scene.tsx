@@ -1,8 +1,10 @@
+import React from "react";
 import * as THREE from "three";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Mesh } from "three";
 import { OrbitControls } from "@react-three/drei";
-import { useFrame } from "@react-three/fiber";
+import { extend, useFrame } from "@react-three/fiber";
+import { BgMaterial } from "./shader";
 
 import { ImprovedNoise } from "three/examples/jsm/Addons.js";
 import { clamp, euclideanModulo } from "three/src/math/MathUtils.js";
@@ -20,7 +22,8 @@ function stripe(value: number, length: number) {
   value = Math.floor(value * stripeColors.length);
   return stripeColors[value];
 }
-function OuterPoints({ amplitude }: { amplitude: number }) {
+
+function OuterPoints() {
   const dots = useRef<THREE.Group>(null!);
   const [colors, setColors] = useState<string[]>(null!);
   const noise = useMemo(() => {
@@ -40,7 +43,6 @@ function OuterPoints({ amplitude }: { amplitude: number }) {
     }
     return wPos;
   }, []);
-
   useFrame((state) => {
     dots.current.children.forEach((e) => e.lookAt(state.camera.position));
     const newColors = [];
@@ -55,7 +57,7 @@ function OuterPoints({ amplitude }: { amplitude: number }) {
       newColors.push(stripe(val * 0.5 + state.clock.oldTime / 1000, 0.9));
     }
     setColors(newColors);
-
+    const amplitude = 0.05;
     for (let dot of dots.current.children) {
       const phase =
         (noise.noise(
@@ -85,57 +87,26 @@ function OuterPoints({ amplitude }: { amplitude: number }) {
     </>
   );
 }
-
 export default function Scene() {
-  const centerCircle = useRef<Mesh>(null!);
-  const [amplitude, setAmplitude] = useState<number>(0);
-  const [analyser, setAnalyser] = useState<AnalyserNode>(null!);
-  useEffect(() => {
-    navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
-      const context = new AudioContext();
-      const analyser_ = context.createAnalyser();
-      const mediaStreamAudioSourceNode =
-        context.createMediaStreamSource(stream);
-      mediaStreamAudioSourceNode.connect(analyser_, 0);
-
-      setAnalyser(analyser_);
-    });
-  }, []);
+  const centerPlane = useRef<Mesh>(null!);
   useFrame((state) => {
-    centerCircle.current.lookAt(state.camera.position);
-    if (!analyser) {
-      return;
-    }
-    const pcmData = new Float32Array(analyser.fftSize);
-    analyser.getFloatTimeDomainData(pcmData);
-    let sum = 0.0;
-    for (const amplitude of pcmData) {
-      sum += amplitude * amplitude;
-    }
-    const rms = Math.sqrt(sum / pcmData.length);
-    setAmplitude(Math.min(1, rms / 0.5));
-  });
-  const control = useControls("control", {
-    amplitude: { value: 0.02, min: 0, max: 0.5, step: 0.01 },
+    centerPlane.current.lookAt(state.camera.position);
   });
   return (
     <>
-      <color attach="background" args={[background]} />
-
       <OrbitControls
         enableZoom={false}
         autoRotate={true}
         maxPolarAngle={Math.PI / 2}
         minPolarAngle={Math.PI / 2}
       />
-      <ambientLight intensity={1} />
-
-      <mesh ref={centerCircle}>
+      <ambientLight intensity={0.2} />
+      <directionalLight intensity={0.5} position={[1, 1, 2]} />
+      <mesh ref={centerPlane}>
         <meshBasicMaterial color={background} />
         <planeGeometry args={[10, 10]} />
       </mesh>
-
-      <OuterPoints amplitude={Math.max(amplitude, control.amplitude)} />
+      <OuterPoints />
     </>
   );
 }
