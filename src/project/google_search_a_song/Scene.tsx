@@ -13,7 +13,7 @@ const red = "#ea4135";
 const green = "#34a853";
 const blue = "#1a73e9";
 const yellow = "#fabd03";
-const stripeColors = [yellow, blue, green, red, green, blue];
+const stripeColors = [yellow, yellow, blue, green, red, red, green, blue];
 
 function stripe(value: number, length: number) {
   value = euclideanModulo(value, length) / length;
@@ -69,7 +69,8 @@ function OuterPoints({ amplitude }: { amplitude: number }) {
       let length = 1 + amplitude * Math.sin(state.clock.oldTime / 100 + phase);
       length = clamp(length, 0.2, 1.2);
       dot.position.setLength(length);
-      dot.scale.set(length, length, length);
+      const scale = 1 + 2 * (length - 1);
+      dot.scale.set(scale, scale, scale);
     }
   });
   return (

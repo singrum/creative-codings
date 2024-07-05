@@ -1,14 +1,11 @@
-import React from "react";
 import * as THREE from "three";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Mesh } from "three";
 import { OrbitControls } from "@react-three/drei";
-import { extend, useFrame } from "@react-three/fiber";
-import { BgMaterial } from "./shader";
+import { useFrame } from "@react-three/fiber";
 
 import { ImprovedNoise } from "three/examples/jsm/Addons.js";
 import { clamp, euclideanModulo } from "three/src/math/MathUtils.js";
-import { useControls } from "leva";
 
 const background = "#202125";
 const red = "#ea4135";
