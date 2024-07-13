@@ -128,7 +128,7 @@ const works: {
     tag: ["WebGL"],
   },
   {
-    path: "https://github.com/singrum/growingblock2",
+    path: "https://singrum.github.io/growingblock2/",
     name: "3d Snake Game",
     imgSrc: "/img/3d_snake.png",
     date: moment("20230325"),
