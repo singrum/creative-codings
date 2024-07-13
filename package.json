@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://singrum.github.io/r3f-note/",
+  "homepage": "https://singrum.github.io/creative-codings/",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
