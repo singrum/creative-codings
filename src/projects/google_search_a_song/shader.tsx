@@ -1,10 +1,10 @@
 import { shaderMaterial } from "@react-three/drei";
-import { background } from "../../lib/colors";
+
 import * as THREE from "three";
 
 export const BgMaterial = shaderMaterial(
   {
-    uColor: new THREE.Color(background),
+    uColor: new THREE.Color("#202125"),
   },
   /*glsl*/ `
  varying vec2 vUv;
