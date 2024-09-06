@@ -22,14 +22,16 @@
     "dat.gui": "^0.7.9",
     "leva": "^0.9.35",
     "lucide-react": "^0.408.0",
+    "lucide-static": "^0.408.0",
     "moment": "^2.30.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^6.24.1",
+    "react-router-dom": "^6.26.1",
     "tailwind-merge": "^2.4.0",
     "tailwindcss-animate": "^1.0.7",
     "three": "^0.166.1",
-    "ts-perlin-simplex": "^0.0.3"
+    "ts-perlin-simplex": "^0.0.3",
+    "wiggle": "^0.0.17"
   },
   "devDependencies": {
     "@types/node": "^20.14.10",
