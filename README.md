@@ -1,1 +1,1 @@
-https://singrum.github.io/creative-codings  
+https://singrum.github.io/creative-codings/
