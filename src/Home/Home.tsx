@@ -23,7 +23,7 @@ const works: {
   tag: string[];
 }[] = [
   {
-    path: "https://singrum.github.io/creative-codings/GoogleSearchSong",
+    path: "./#/GoogleSearchSong",
     name: "Google Audio Visualizer",
     imgSrc: "./img/googlesearchsong.png",
     date: moment("20240706"),
