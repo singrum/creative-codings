@@ -1,8 +1,8 @@
-import React, { useState } from "react";
 import { Filter } from "lucide-react";
-import { cn } from "../lib/utils";
 import moment from "moment";
+import React, { useState } from "react";
 import { Badge } from "../components/ui/badge";
+import { cn } from "../lib/utils";
 
 const tags: string[] = [
   "R3F",
@@ -146,6 +146,13 @@ const works: {
     name: "Morphing Globe",
     imgSrc: "./img/morphing_globe.png",
     date: moment("20230226"),
+    tag: ["three.js"],
+  },
+  {
+    path: "https://singrum.github.io/threejsnote/notes/note20_patrick_with_horse",
+    name: "Ptrick with Horse",
+    imgSrc: "./img/patrick.png",
+    date: moment("20230228"),
     tag: ["three.js"],
   },
 ];
